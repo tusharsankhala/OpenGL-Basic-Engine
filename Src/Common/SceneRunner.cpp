@@ -57,7 +57,7 @@ void SceneRunner::Init()
 
 int SceneRunner::Run(Scene& scene)
 {
-	scene.SetDimension(m_frameBufferWidth, m_frameBufferHeight);
+	scene.SetDimensions(m_frameBufferWidth, m_frameBufferHeight);
 	scene.InitScene();
 	scene.Resize(m_frameBufferWidth, m_frameBufferHeight);
 

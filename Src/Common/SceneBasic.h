@@ -3,31 +3,32 @@
 
 #include "Scene.h"
 
-#include <glad/glad.h>
-
+#include "CommonOGL.h"
 #include <string>
 
 class SceneBasic : public Scene
 {
-public:
-
-    void InitScene() override;
-	void Update(float t)override;
-	void Render() override;
-	void Resize(int, int) override;
-
 private:
-	GLuint m_vaoHandle;
-	GLuint m_programHandle;
+    GLuint m_vaoHandle;
+    GLuint m_programHandle;
 
-	void LinkProgram(GLint vertShader, GLint fragShader);
-	void CompileShaderProgram();
-	void WriteShaderBinary();
-	void LoadShaderBinary(GLint);
-	void LoadSpirvShader();
+    void LinkProgram(GLint vertShader, GLint fragShader);
+    void CompileShaderProgram();
+    void WriteShaderBinary();
+    void LoadShaderBinary(GLint);
+    //void LoadSpirvShader();
 
-	std::string GetShaderInfoLog(GLuint shader);
-	std::string GetProgramInfoLog(GLuint program);
+    std::string GetShaderInfoLog(GLuint shader);
+    std::string GetProgramInfoLog(GLuint program);
+
+public:
+    SceneBasic();
+
+    void InitScene();
+    void Update(float t);
+    void Render();
+    void Resize(int, int);
+
 };
 
-#endif
+#endif // SCENEBASIC_H

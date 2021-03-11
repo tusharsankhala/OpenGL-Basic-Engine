@@ -1,5 +1,6 @@
 #include "Scenebasic.h"
 
+
 #include <cstdio>
 #include <cstdlib>
 
@@ -11,7 +12,7 @@ using std::string;
 #include <vector>
 #include <iterator>
 
-#include "GLUtils.h"
+#include "../Utils/GLUtils.h"
 
 SceneBasic::SceneBasic() { }
 
@@ -45,22 +46,20 @@ void SceneBasic::InitScene()
            -0.8f, -0.8f, 0.0f,
             0.8f, -0.8f, 0.0f,
             0.8f,  0.8f, 0.0f,
-
-            0.8f, 0.8f, 0.0f,
             -0.8f, 0.8f, 0.0f,
-            -0.8f, -0.8f, 0.0f
     };
 
+    unsigned int indices[] = {
+          0, 1, 2,
+          2, 3, 0,
+    };
 
     float colorData[] = {
             1.0f, 0.0f, 0.0f,
             0.0f, 1.0f, 0.0f,
             0.0f, 0.0f, 1.0f,
             1.0f, 1.0f, 0.0f,
-            0.0f, 1.0f, 1.0f,
-            1.0f, 0.0f, 1.0f
     };
-
 
     // Create and populate the buffer objects
     GLuint vboHandles[2];
@@ -68,11 +67,15 @@ void SceneBasic::InitScene()
     GLuint positionBufferHandle = vboHandles[0];
     GLuint colorBufferHandle = vboHandles[1];
 
+    // Index buffer.
+    unsigned int  iboHandle;
+    glGenBuffers(1, &iboHandle);
+    
     glBindBuffer(GL_ARRAY_BUFFER, positionBufferHandle);
-    glBufferData(GL_ARRAY_BUFFER, 9 * 2 * sizeof(float), positionData, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, 4 * 3 * sizeof(float), positionData, GL_STATIC_DRAW);
 
     glBindBuffer(GL_ARRAY_BUFFER, colorBufferHandle);
-    glBufferData(GL_ARRAY_BUFFER, 9 * 2 * sizeof(float), colorData, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, 4 * 3 * sizeof(float), colorData, GL_STATIC_DRAW);
 
     // Create and set-up the vertex array object
     glGenVertexArrays(1, &m_vaoHandle);
@@ -86,7 +89,12 @@ void SceneBasic::InitScene()
 
     glBindBuffer(GL_ARRAY_BUFFER, colorBufferHandle);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (GLubyte*)NULL);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboHandle);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(unsigned int), indices, GL_STATIC_DRAW);
+
     glBindVertexArray(0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
 /*
@@ -381,7 +389,10 @@ void SceneBasic::Render()
     glClear(GL_COLOR_BUFFER_BIT);
 
     glBindVertexArray(m_vaoHandle);
-    glDrawArrays(GL_TRIANGLES, 0, 6);
+    
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+    GLUtils::CheckForOpenGLError(__FILE__, __LINE__);
+
     glBindVertexArray(0);
 }
 

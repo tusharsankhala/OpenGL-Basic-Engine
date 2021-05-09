@@ -3,6 +3,8 @@
 
 #include "Scene.h"
 #include "ShaderClass.h"
+#include "VAOClass.h"
+#include "VBOClass.h"
 
 #include "CommonOGL.h"
 #include <string>
@@ -14,6 +16,8 @@ private:
     GLuint m_programHandle;
     GLuint vboHandles[2];
     Shader shader;
+    VAO vao;
+    VBO vbo;
 
     int m_colorLoc;
 

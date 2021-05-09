@@ -2,6 +2,7 @@
 #define SCENEBASIC_H
 
 #include "Scene.h"
+#include "ShaderClass.h"
 
 #include "CommonOGL.h"
 #include <string>
@@ -11,18 +12,14 @@ class SceneBasic : public Scene
 private:
     GLuint m_vaoHandle;
     GLuint m_programHandle;
+    GLuint vboHandles[2];
+    Shader shader;
 
-    void LinkProgram(GLint vertShader, GLint fragShader);
-    void CompileShaderProgram();
-    void WriteShaderBinary();
-    void LoadShaderBinary(GLint);
-    //void LoadSpirvShader();
-
-    std::string GetShaderInfoLog(GLuint shader);
-    std::string GetProgramInfoLog(GLuint program);
+    int m_colorLoc;
 
 public:
     SceneBasic();
+    ~SceneBasic();
 
     void InitScene();
     void Update(float t);

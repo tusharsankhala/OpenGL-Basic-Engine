@@ -16,8 +16,8 @@
 SceneBasic::SceneBasic() { }
 SceneBasic::~SceneBasic()
 {
-    glDeleteVertexArrays(1, &m_vaoHandle);
-    glDeleteBuffers(2, vboHandles);
+    vao.Delete();
+    vbo.Delete();
     shader.Delete();
 }
 
@@ -38,11 +38,18 @@ void SceneBasic::InitScene()
     shader.Activate();
 
     /////////////////// Create the VBO ////////////////////
-    float positionData[] = {
+    GLfloat positionData[] = {
            -0.8f, -0.8f, 0.0f,
+            1.0f, 0.0f, 0.0f,
+
             0.8f, -0.8f, 0.0f,
+            0.0f, 1.0f, 0.0f,
+
             0.8f,  0.8f, 0.0f,
+            0.0f, 0.0f, 1.0f,
+
             -0.8f, 0.8f, 0.0f,
+            1.0f, 1.0f, 0.0f,
     };
 
     unsigned int indices[] = {
@@ -50,46 +57,26 @@ void SceneBasic::InitScene()
           2, 3, 0,
     };
 
-    float colorData[] = {
-            1.0f, 0.0f, 0.0f,
-            0.0f, 1.0f, 0.0f,
-            0.0f, 0.0f, 1.0f,
-            1.0f, 1.0f, 0.0f,
-    };
-
     // Create and populate the buffer objects
-    glGenBuffers(2, vboHandles);
-    GLuint positionBufferHandle = vboHandles[0];
-    GLuint colorBufferHandle = vboHandles[1];
-
+    vbo.Create(positionData, sizeof(positionData));
+    
     // Index buffer.
     unsigned int  iboHandle;
     glGenBuffers(1, &iboHandle);
-    
-    glBindBuffer(GL_ARRAY_BUFFER, positionBufferHandle);
-    glBufferData(GL_ARRAY_BUFFER, 4 * 3 * sizeof(float), positionData, GL_STATIC_DRAW);
-
-    glBindBuffer(GL_ARRAY_BUFFER, colorBufferHandle);
-    glBufferData(GL_ARRAY_BUFFER, 4 * 3 * sizeof(float), colorData, GL_STATIC_DRAW);
 
     // Create and set-up the vertex array object
-    glGenVertexArrays(1, &m_vaoHandle);
-    glBindVertexArray(m_vaoHandle);
+    vao.Create();
+    vao.Bind();
 
-    glEnableVertexAttribArray(0);  // Vertex position
-    glEnableVertexAttribArray(1);  // Vertex color
-
-    glBindBuffer(GL_ARRAY_BUFFER, positionBufferHandle);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (GLubyte*)NULL);
-
-    glBindBuffer(GL_ARRAY_BUFFER, colorBufferHandle);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (GLubyte*)NULL);
-
+    vao.LinkAttributes(vbo, 0, 3, GL_FLOAT, 6 * sizeof(GL_FLOAT), (void*)0);
+    vao.LinkAttributes(vbo, 1, 3, GL_FLOAT, 6 * sizeof(GL_FLOAT), (void*)(3 * sizeof(GL_FLOAT)));
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboHandle);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(unsigned int), indices, GL_STATIC_DRAW);
 
-    glBindVertexArray(0);
+    vao.Unbind();
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+    vbo.Unbind();
 }
 
 /*
@@ -111,12 +98,12 @@ void SceneBasic::Render()
 {
     glClear(GL_COLOR_BUFFER_BIT);
 
-    glBindVertexArray(m_vaoHandle);
+    vao.Bind();
     
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     GLUtils::CheckForOpenGLError(__FILE__, __LINE__);
 
-    glBindVertexArray(0);
+    vao.Unbind();
 }
 
 void SceneBasic::Resize(int w, int h)

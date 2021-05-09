@@ -3,6 +3,12 @@
 VAO::VAO()
 {}
 
+// Create and set-up the vertex array object
+void VAO::Create()
+{
+	glGenVertexArrays(1, &m_vaoHandle);
+}
+
 void VAO::LinkAttributes(VBO vbo, GLuint layout, GLuint numComponents,
 						 GLenum type, GLsizeiptr stride, void* offset)
 {

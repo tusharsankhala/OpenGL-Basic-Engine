@@ -9,6 +9,7 @@ class VAO
 public:
 	VAO();
 
+	void Create();
 	void LinkAttributes(VBO vbo, GLuint layout, GLuint numComponents,
 						GLenum type, GLsizeiptr stride, void* offset);
 

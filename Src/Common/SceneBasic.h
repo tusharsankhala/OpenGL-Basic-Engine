@@ -5,6 +5,7 @@
 #include "ShaderClass.h"
 #include "VAOClass.h"
 #include "VBOClass.h"
+#include "EBOClass.h"
 
 #include "CommonOGL.h"
 #include <string>
@@ -18,6 +19,7 @@ private:
     Shader shader;
     VAO vao;
     VBO vbo;
+    EBO ebo;
 
     int m_colorLoc;
 

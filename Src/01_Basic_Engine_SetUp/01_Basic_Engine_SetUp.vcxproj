@@ -119,18 +119,24 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\external\GLAD\src\glad.c" />
+    <ClCompile Include="..\Common\EBOClass.cpp" />
     <ClCompile Include="..\Common\SceneBasic.cpp" />
     <ClCompile Include="..\Common\SceneRunner.cpp" />
     <ClCompile Include="..\Common\ShaderClass.cpp" />
+    <ClCompile Include="..\Common\VAOClass.cpp" />
+    <ClCompile Include="..\Common\VBOClass.cpp" />
     <ClCompile Include="..\Utils\GLUtils.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Common\CommonOGL.h" />
+    <ClInclude Include="..\Common\EBOClass.h" />
     <ClInclude Include="..\Common\Scene.h" />
     <ClInclude Include="..\Common\SceneBasic.h" />
     <ClInclude Include="..\Common\SceneRunner.h" />
     <ClInclude Include="..\Common\ShaderClass.h" />
+    <ClInclude Include="..\Common\VAOClass.h" />
+    <ClInclude Include="..\Common\VBOClass.h" />
     <ClInclude Include="..\Utils\GLUtils.h" />
   </ItemGroup>
   <ItemGroup>

@@ -61,8 +61,7 @@ void SceneBasic::InitScene()
     vbo.Create(positionData, sizeof(positionData));
     
     // Index buffer.
-    unsigned int  iboHandle;
-    glGenBuffers(1, &iboHandle);
+    ebo.Create();
 
     // Create and set-up the vertex array object
     vao.Create();
@@ -70,12 +69,13 @@ void SceneBasic::InitScene()
 
     vao.LinkAttributes(vbo, 0, 3, GL_FLOAT, 6 * sizeof(GL_FLOAT), (void*)0);
     vao.LinkAttributes(vbo, 1, 3, GL_FLOAT, 6 * sizeof(GL_FLOAT), (void*)(3 * sizeof(GL_FLOAT)));
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboHandle);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(unsigned int), indices, GL_STATIC_DRAW);
+
+    ebo.Bind();
+    ebo.LinkAttributes(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(unsigned int), indices, GL_STATIC_DRAW);
 
     vao.Unbind();
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
+    ebo.Unbind();
+    
     vbo.Unbind();
 }
 

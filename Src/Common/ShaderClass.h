@@ -13,6 +13,7 @@ public:
 	std::string GetShaderInfoLog(GLuint shader);
 	std::string GetProgramInfoLog(GLuint program);
 
+	GLuint GetUniformLocation(std::string uniformName) const;
 	void Activate();
 	void Delete();
 

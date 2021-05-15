@@ -11,6 +11,8 @@
 #include <vector>
 #include <iterator>
 
+#include <stb_image.h>
+
 #include "../Utils/GLUtils.h"
 
 SceneBasic::SceneBasic() { }
@@ -19,6 +21,7 @@ SceneBasic::~SceneBasic()
     vao.Delete();
     vbo.Delete();
     shader.Delete();
+    glDeleteTextures(1, &m_texture);
 }
 
 void SceneBasic::InitScene()
@@ -41,15 +44,19 @@ void SceneBasic::InitScene()
     GLfloat positionData[] = {
            -0.8f, -0.8f, 0.0f,
             1.0f, 0.0f, 0.0f,
+            0.0f, 0.0f,
 
             0.8f, -0.8f, 0.0f,
             0.0f, 1.0f, 0.0f,
+            1.0f, 0.0f,
 
             0.8f,  0.8f, 0.0f,
             0.0f, 0.0f, 1.0f,
+            1.0f, 1.0f,
 
             -0.8f, 0.8f, 0.0f,
             1.0f, 1.0f, 0.0f,
+            0.0f, 1.0f,
     };
 
     unsigned int indices[] = {
@@ -67,8 +74,9 @@ void SceneBasic::InitScene()
     vao.Create();
     vao.Bind();
 
-    vao.LinkAttributes(vbo, 0, 3, GL_FLOAT, 6 * sizeof(GL_FLOAT), (void*)0);
-    vao.LinkAttributes(vbo, 1, 3, GL_FLOAT, 6 * sizeof(GL_FLOAT), (void*)(3 * sizeof(GL_FLOAT)));
+    vao.LinkAttributes(vbo, 0, 3, GL_FLOAT, 8 * sizeof(GL_FLOAT), (void*)0);
+    vao.LinkAttributes(vbo, 1, 3, GL_FLOAT, 8 * sizeof(GL_FLOAT), (void*)(3 * sizeof(GL_FLOAT)));
+    vao.LinkAttributes(vbo, 2, 2, GL_FLOAT, 8 * sizeof(GL_FLOAT), (void*)(6 * sizeof(GL_FLOAT)));
 
     ebo.Bind();
     ebo.LinkAttributes(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(unsigned int), indices, GL_STATIC_DRAW);
@@ -77,6 +85,32 @@ void SceneBasic::InitScene()
     ebo.Unbind();
     
     vbo.Unbind();
+
+    int widthImg, heightImg, numColCh;
+    stbi_set_flip_vertically_on_load(true);
+    unsigned char* bytes = stbi_load("../Resources/Textures/UVChecker.jpeg", &widthImg, &heightImg, &numColCh, 0);
+
+    // Generating texture buffer
+    glGenTextures(1, &m_texture);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, m_texture);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, widthImg, heightImg, 0, GL_RGB, GL_UNSIGNED_BYTE, bytes);
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+
+    stbi_image_free(bytes);
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+    GLuint texUnit0 = shader.GetUniformLocation("tex0");
+    glUniform1i(texUnit0, 0);
+    glBindTexture(GL_TEXTURE_2D, m_texture);
 }
 
 /*

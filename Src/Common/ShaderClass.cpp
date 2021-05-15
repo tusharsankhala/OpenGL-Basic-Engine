@@ -146,6 +146,10 @@ std::string Shader::GetProgramInfoLog(GLuint program)
     return log;
 }
 
+GLuint Shader::GetUniformLocation(std::string uniformName) const
+{
+    return glGetUniformLocation(m_programHandle, uniformName.c_str());
+}
 
 void Shader::Activate()
 {

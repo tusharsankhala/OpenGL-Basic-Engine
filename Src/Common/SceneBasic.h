@@ -21,6 +21,8 @@ private:
     VBO vbo;
     EBO ebo;
 
+    GLuint m_texture;
+
     int m_colorLoc;
 
 public:

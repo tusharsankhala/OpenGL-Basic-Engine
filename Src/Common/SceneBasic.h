@@ -9,6 +9,11 @@
 #include "TextureClass.h"
 
 #include "CommonOGL.h"
+
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
 #include <string>
 
 class SceneBasic : public Scene
@@ -23,10 +28,18 @@ private:
     EBO ebo;
     Texture m_texture;
 
+    // Matrices
+    glm::mat4 model;
+    glm::mat4 view;
+    glm::mat4 proj;
+
+    GLint m_modelLoc;
+    GLint m_viewLoc;
+    GLint m_projLoc;
     int m_colorLoc;
 
 public:
-    SceneBasic();
+    SceneBasic(const int width, const int height);
     ~SceneBasic();
 
     void InitScene();

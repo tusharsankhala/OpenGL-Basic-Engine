@@ -7,9 +7,13 @@ layout (location=2) in vec2 vertexTexCoord;
 layout (location=0) out vec3 vColor;
 layout (location=1) out vec2 texCoord;
 
+uniform mat4 model;
+uniform mat4 view;
+uniform mat4 proj;
+
 void main()
 {
 	vColor = vertexColor;
-	gl_Position = vec4(vertexPosition, 1.0f);
+	gl_Position = proj * view * model * vec4(vertexPosition, 1.0f);
 	texCoord = vertexTexCoord;
 }

@@ -1,6 +1,7 @@
 #include "Scenebasic.h"
 
 
+
 #include <cstdio>
 #include <cstdlib>
 
@@ -15,7 +16,14 @@
 
 #include "../Utils/GLUtils.h"
 
-SceneBasic::SceneBasic() { }
+SceneBasic::SceneBasic(const int width, const int height) :  model(glm::mat4(1.0f)),
+                            view(glm::mat4(1.0f)),
+                            proj(glm::mat4(1.0f))
+{
+    view = glm::translate(view, glm::vec3(0.0f, -0.5f, -2.0f));
+    proj = glm::perspective(glm::radians(45.0f), (float)(width / height), 0.1f, 100.0f);
+}
+
 SceneBasic::~SceneBasic()
 {
     vao.Delete();
@@ -26,6 +34,9 @@ SceneBasic::~SceneBasic()
 
 void SceneBasic::InitScene()
 {
+    
+
+
     // **************************************************************************************
     // Choose one of the following options for the shader program.
     //  1)  Compile the shader program normally
@@ -40,8 +51,21 @@ void SceneBasic::InitScene()
     shader.Load("../Shaders/Basic.vert", "../Shaders/basic.frag");
     shader.Activate();
 
+    // Setup transformation Matrix.
+    m_modelLoc = shader.GetUniformLocation("model");
+    glUniformMatrix4fv(m_modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+
+    m_viewLoc = shader.GetUniformLocation("view");
+    glUniformMatrix4fv(m_viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+
+    m_projLoc = shader.GetUniformLocation("proj");
+    glUniformMatrix4fv(m_projLoc, 1, GL_FALSE, glm::value_ptr(proj));
+
+    
+
     /////////////////// Create the VBO ////////////////////
     GLfloat positionData[] = {
+            // Front
            -0.8f, -0.8f, 0.0f,
             1.0f, 0.0f, 0.0f,
             0.0f, 0.0f,
@@ -85,7 +109,8 @@ void SceneBasic::InitScene()
     ebo.Unbind();
     
     vbo.Unbind();
-        // Generating texture buffer
+    
+    // Generating texture buffer
     m_texture.Create("../Resources/Textures/UVChecker.jpeg", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGB, GL_UNSIGNED_BYTE);
     
     GLuint texUnit0 = shader.GetUniformLocation("tex0");
@@ -103,10 +128,9 @@ void SceneBasic::LinkProgram(GLint vertShader, GLint fragShader)
 
 void SceneBasic::Update(float t)
 {
-    //float r = sin(t * 10.0f);
-    //glUniform4f(m_colorLoc, r, 0.0f, 0.0f, 1.0f);
-
-    //std::cout << "r: " << r << '\n';
+    float r = sin(t * 10.0f);
+    model = glm::rotate(model, glm::radians(t), glm::vec3(0.0f, 1.0f, 0.0f));
+    glUniformMatrix4fv(m_modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 }
 
 void SceneBasic::Render()

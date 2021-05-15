@@ -21,7 +21,7 @@ SceneBasic::~SceneBasic()
     vao.Delete();
     vbo.Delete();
     shader.Delete();
-    glDeleteTextures(1, &m_texture);
+    m_texture.Delete();
 }
 
 void SceneBasic::InitScene()
@@ -85,32 +85,13 @@ void SceneBasic::InitScene()
     ebo.Unbind();
     
     vbo.Unbind();
-
-    int widthImg, heightImg, numColCh;
-    stbi_set_flip_vertically_on_load(true);
-    unsigned char* bytes = stbi_load("../Resources/Textures/UVChecker.jpeg", &widthImg, &heightImg, &numColCh, 0);
-
-    // Generating texture buffer
-    glGenTextures(1, &m_texture);
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, m_texture);
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, widthImg, heightImg, 0, GL_RGB, GL_UNSIGNED_BYTE, bytes);
-    glGenerateMipmap(GL_TEXTURE_2D);
-
-
-    stbi_image_free(bytes);
-    glBindTexture(GL_TEXTURE_2D, 0);
-
+        // Generating texture buffer
+    m_texture.Create("../Resources/Textures/UVChecker.jpeg", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGB, GL_UNSIGNED_BYTE);
+    
     GLuint texUnit0 = shader.GetUniformLocation("tex0");
     glUniform1i(texUnit0, 0);
-    glBindTexture(GL_TEXTURE_2D, m_texture);
+
+    m_texture.Bind();
 }
 
 /*

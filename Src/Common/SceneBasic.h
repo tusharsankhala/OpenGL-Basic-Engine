@@ -6,6 +6,7 @@
 #include "VAOClass.h"
 #include "VBOClass.h"
 #include "EBOClass.h"
+#include "TextureClass.h"
 
 #include "CommonOGL.h"
 #include <string>
@@ -20,8 +21,7 @@ private:
     VAO vao;
     VBO vbo;
     EBO ebo;
-
-    GLuint m_texture;
+    Texture m_texture;
 
     int m_colorLoc;
 

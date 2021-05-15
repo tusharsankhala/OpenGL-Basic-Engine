@@ -124,6 +124,7 @@
     <ClCompile Include="..\Common\SceneRunner.cpp" />
     <ClCompile Include="..\Common\ShaderClass.cpp" />
     <ClCompile Include="..\Common\STB_Image.cpp" />
+    <ClCompile Include="..\Common\TextureClass.cpp" />
     <ClCompile Include="..\Common\VAOClass.cpp" />
     <ClCompile Include="..\Common\VBOClass.cpp" />
     <ClCompile Include="..\Utils\GLUtils.cpp" />
@@ -136,6 +137,7 @@
     <ClInclude Include="..\Common\SceneBasic.h" />
     <ClInclude Include="..\Common\SceneRunner.h" />
     <ClInclude Include="..\Common\ShaderClass.h" />
+    <ClInclude Include="..\Common\TextureClass.h" />
     <ClInclude Include="..\Common\VAOClass.h" />
     <ClInclude Include="..\Common\VBOClass.h" />
     <ClInclude Include="..\Utils\GLUtils.h" />

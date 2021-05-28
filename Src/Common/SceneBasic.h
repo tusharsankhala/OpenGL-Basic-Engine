@@ -14,6 +14,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include <vector>
 #include <string>
 
 class SceneBasic : public Scene
@@ -22,6 +23,9 @@ private:
     GLuint m_vaoHandle;
     GLuint m_programHandle;
     GLuint vboHandles[2];
+
+    std::vector<GLuint> m_indexBuffer;
+
     Shader shader;
     VAO vao;
     VBO vbo;

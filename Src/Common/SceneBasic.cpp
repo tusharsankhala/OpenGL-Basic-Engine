@@ -16,9 +16,9 @@
 
 #include "../Utils/GLUtils.h"
 
-SceneBasic::SceneBasic(const int width, const int height) :  model(glm::mat4(1.0f)),
-                            view(glm::mat4(1.0f)),
-                            proj(glm::mat4(1.0f))
+SceneBasic::SceneBasic(const int width, const int height) : model(glm::mat4(1.0f)),
+                                                            view(glm::mat4(1.0f)),
+                                                            proj(glm::mat4(1.0f))
 {
     view = glm::translate(view, glm::vec3(0.0f, -0.5f, -2.0f));
     proj = glm::perspective(glm::radians(45.0f), (float)(width / height), 0.1f, 100.0f);
@@ -34,9 +34,6 @@ SceneBasic::~SceneBasic()
 
 void SceneBasic::InitScene()
 {
-    
-
-
     // **************************************************************************************
     // Choose one of the following options for the shader program.
     //  1)  Compile the shader program normally
@@ -61,36 +58,34 @@ void SceneBasic::InitScene()
     m_projLoc = shader.GetUniformLocation("proj");
     glUniformMatrix4fv(m_projLoc, 1, GL_FALSE, glm::value_ptr(proj));
 
-    
+
 
     /////////////////// Create the VBO ////////////////////
     GLfloat positionData[] = {
-            // Front
-           -0.8f, -0.8f, 0.0f,
-            1.0f, 0.0f, 0.0f,
-            0.0f, 0.0f,
+        
+       -0.5f, 0.0f, -0.5f,      1.0f, 0.0f, 0.0f,       0.0f, 0.0f,
 
-            0.8f, -0.8f, 0.0f,
-            0.0f, 1.0f, 0.0f,
-            1.0f, 0.0f,
+       -0.5f, 0.0f, -0.5f,      1.0f, 1.0f, 0.0f,       5.0f, 0.0f,
 
-            0.8f,  0.8f, 0.0f,
-            0.0f, 0.0f, 1.0f,
-            1.0f, 1.0f,
+        0.5f, 0.0f, -0.5f,      0.0f, 1.0f, 0.0f,       0.0f, 0.0f,
 
-            -0.8f, 0.8f, 0.0f,
-            1.0f, 1.0f, 0.0f,
-            0.0f, 1.0f,
+        0.5f, 0.0f, 0.5f,       0.0f, 0.0f, 1.0f,       5.0f, 0.0f,  
+
+        0.0f, 0.8f, 0.0f,       1.0f, 1.0f, 1.0f,       2.5f, 5.0f,
     };
 
-    unsigned int indices[] = {
-          0, 1, 2,
-          2, 3, 0,
-    };
+    m_indexBuffer.insert(std::end(m_indexBuffer), { 0, 1, 2,
+                                                    0, 2, 3,
+                                                    0, 1, 4,
+                                                    1, 2, 4,
+                                                    2, 3, 4,
+                                                    3, 0, 4,
+        });
 
+   
     // Create and populate the buffer objects
     vbo.Create(positionData, sizeof(positionData));
-    
+
     // Index buffer.
     ebo.Create();
 
@@ -103,16 +98,16 @@ void SceneBasic::InitScene()
     vao.LinkAttributes(vbo, 2, 2, GL_FLOAT, 8 * sizeof(GL_FLOAT), (void*)(6 * sizeof(GL_FLOAT)));
 
     ebo.Bind();
-    ebo.LinkAttributes(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(unsigned int), indices, GL_STATIC_DRAW);
+    ebo.LinkAttributes(GL_ELEMENT_ARRAY_BUFFER, m_indexBuffer.size() * sizeof(unsigned int), m_indexBuffer.data(), GL_STATIC_DRAW);
 
     vao.Unbind();
     ebo.Unbind();
-    
+
     vbo.Unbind();
-    
+
     // Generating texture buffer
     m_texture.Create("../Resources/Textures/UVChecker.jpeg", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGB, GL_UNSIGNED_BYTE);
-    
+
     GLuint texUnit0 = shader.GetUniformLocation("tex0");
     glUniform1i(texUnit0, 0);
 
@@ -128,18 +123,18 @@ void SceneBasic::LinkProgram(GLint vertShader, GLint fragShader)
 
 void SceneBasic::Update(float t)
 {
-    float r = sin(t * 10.0f);
-    model = glm::rotate(model, glm::radians(t), glm::vec3(0.0f, 1.0f, 0.0f));
+    float r = t * 30.0f;
+    model = glm::rotate(model, glm::radians(r), glm::vec3(0.0f, 1.0f, 0.0f));
     glUniformMatrix4fv(m_modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 }
 
 void SceneBasic::Render()
 {
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     vao.Bind();
-    
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+    glDrawElements(GL_TRIANGLES, m_indexBuffer.size(), GL_UNSIGNED_INT, 0);
     GLUtils::CheckForOpenGLError(__FILE__, __LINE__);
 
     vao.Unbind();

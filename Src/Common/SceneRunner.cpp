@@ -73,9 +73,20 @@ int SceneRunner::Run(Scene& scene)
 
 void SceneRunner::MainLoop(GLFWwindow* window, Scene& scene)
 {
+	double previousTime = glfwGetTime();
+
+	glEnable(GL_DEPTH_TEST);
+
 	while (!glfwWindowShouldClose(window) && !glfwGetKey(window, GLFW_KEY_ESCAPE))
 	{
-		scene.Update(glfwGetTime());
+		double currentTime = glfwGetTime();
+		double delta = currentTime - previousTime;
+		if (delta >= 1 / 60)
+		{
+			previousTime = currentTime;
+		}
+
+		scene.Update(delta);
 		scene.Render();
 		glfwSwapBuffers(window);
 		glfwPollEvents();

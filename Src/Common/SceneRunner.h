@@ -20,7 +20,9 @@ public:
 	void Init();
 	int Run(Scene& scene);
 
+	GLFWwindow* GetWindow();
 private:
+
 	void MainLoop(GLFWwindow* window, Scene& scene);
 
 private:

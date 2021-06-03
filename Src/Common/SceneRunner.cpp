@@ -70,7 +70,6 @@ int SceneRunner::Run(Scene& scene)
 	return EXIT_SUCCESS;
 }
 
-
 void SceneRunner::MainLoop(GLFWwindow* window, Scene& scene)
 {
 	double previousTime = glfwGetTime();
@@ -88,7 +87,14 @@ void SceneRunner::MainLoop(GLFWwindow* window, Scene& scene)
 
 		scene.Update(delta);
 		scene.Render();
+
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
+}
+
+
+GLFWwindow* SceneRunner::GetWindow()
+{
+	return m_window;
 }

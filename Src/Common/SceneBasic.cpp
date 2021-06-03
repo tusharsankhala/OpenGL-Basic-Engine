@@ -1,7 +1,5 @@
 #include "Scenebasic.h"
 
-
-
 #include <cstdio>
 #include <cstdlib>
 
@@ -16,9 +14,13 @@
 
 #include "../Utils/GLUtils.h"
 
-SceneBasic::SceneBasic(const int width, const int height) : model(glm::mat4(1.0f)),
-                                                            view(glm::mat4(1.0f)),
-                                                            proj(glm::mat4(1.0f))
+SceneBasic::SceneBasic(GLFWwindow* window, const int width, const int height)
+    : m_window(window),
+      m_width(width),
+      m_height(height),
+      model(glm::mat4(1.0f)),
+      view(glm::mat4(1.0f)),
+      proj(glm::mat4(1.0f))
 {
     view = glm::translate(view, glm::vec3(0.0f, -0.5f, -2.0f));
     proj = glm::perspective(glm::radians(45.0f), (float)(width / height), 0.1f, 100.0f);
@@ -44,6 +46,9 @@ void SceneBasic::InitScene()
     // writeShaderBinary().
     // **************************************************************************************
 
+    // Camera.
+    m_camera.Init(m_width, m_height, glm::vec3(0.0f, 0.0f, 2.0f));
+
     // (1) Use this to load and compile the shader program.
     shader.Load("../Shaders/Basic.vert", "../Shaders/basic.frag");
     shader.Activate();
@@ -57,8 +62,6 @@ void SceneBasic::InitScene()
 
     m_projLoc = shader.GetUniformLocation("proj");
     glUniformMatrix4fv(m_projLoc, 1, GL_FALSE, glm::value_ptr(proj));
-
-
 
     /////////////////// Create the VBO ////////////////////
     GLfloat positionData[] = {
@@ -126,11 +129,15 @@ void SceneBasic::Update(float t)
     float r = t * 30.0f;
     model = glm::rotate(model, glm::radians(r), glm::vec3(0.0f, 1.0f, 0.0f));
     glUniformMatrix4fv(m_modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+
+    m_camera.Inputs(m_window);
 }
 
 void SceneBasic::Render()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    m_camera.Matrix(45.0f, 0.1f, 100.0f, shader, "camMatrix");
 
     vao.Bind();
 

@@ -6,6 +6,8 @@
 #include "VAOClass.h"
 #include "VBOClass.h"
 #include "EBOClass.h"
+#include "Camera.h"
+
 #include "TextureClass.h"
 
 #include "CommonOGL.h"
@@ -26,10 +28,14 @@ private:
 
     std::vector<GLuint> m_indexBuffer;
 
+    int m_width;
+    int m_height;
+
     Shader shader;
     VAO vao;
     VBO vbo;
     EBO ebo;
+    Camera m_camera;
     Texture m_texture;
 
     // Matrices
@@ -42,8 +48,11 @@ private:
     GLint m_projLoc;
     int m_colorLoc;
 
+private:
+    GLFWwindow* m_window;
+
 public:
-    SceneBasic(const int width, const int height);
+    SceneBasic(GLFWwindow* window, const int width, const int height);
     ~SceneBasic();
 
     void InitScene();

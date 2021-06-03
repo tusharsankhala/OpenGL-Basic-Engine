@@ -17,7 +17,7 @@ int main()
 	runner.Init();
 
 	std::unique_ptr<Scene> scene;
-	scene = std::unique_ptr<Scene>(new SceneBasic(winWidth, winHeight));
+	scene = std::unique_ptr<Scene>(new SceneBasic(runner.GetWindow(), winWidth, winHeight));
 
 	return runner.Run(*scene);
 }

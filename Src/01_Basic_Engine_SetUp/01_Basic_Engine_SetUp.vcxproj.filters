@@ -1,0 +1,155 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{957e9721-4f08-4507-9374-d4d3d845165e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source FIles">
+      <UniqueIdentifier>{1d3c049b-a5e2-4295-92fd-12d0b0669478}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source FIles\Common">
+      <UniqueIdentifier>{bc4cde21-c2da-4629-910b-8ad0e2cdae91}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source FIles\GLAD">
+      <UniqueIdentifier>{998434cf-adde-4e04-8502-f107f29f359d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Common">
+      <UniqueIdentifier>{7dc024d8-f1b1-41f7-942d-3df03cb82b2a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Common\Utils">
+      <UniqueIdentifier>{7ece765c-70c2-4a40-85c3-a12ad2809e32}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Common\Scene">
+      <UniqueIdentifier>{560750b2-801f-4585-b332-aeccfa3a6f02}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source FIles\Common\Scene">
+      <UniqueIdentifier>{cf602a3e-de10-4e96-943a-32da3101542a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source FIles\Utils">
+      <UniqueIdentifier>{c69a58a2-cc03-4cb3-a3c0-8004efb9362f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Common\Shaders">
+      <UniqueIdentifier>{a1b8bedf-5c8f-482e-bceb-be11b19392d9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source FIles\ShadersSource">
+      <UniqueIdentifier>{7c8587d0-ba56-4369-a164-3912265c3e92}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source FIles\Common\Shaders">
+      <UniqueIdentifier>{0537c22b-41dd-4a55-9f8b-b54ec6dea2b3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Common\VBO">
+      <UniqueIdentifier>{bb5b0f30-198b-4055-829b-7d199210336f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source FIles\Common\VBO">
+      <UniqueIdentifier>{9a73e988-b4d9-46e5-8336-05b8984f3380}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Common\VAO">
+      <UniqueIdentifier>{dafe3827-c432-4602-ae2c-3006458ac95c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source FIles\Common\VAO">
+      <UniqueIdentifier>{c0112b7e-1571-4080-ad4b-c7194adeeaf3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Common\EBO">
+      <UniqueIdentifier>{976ed39e-6bca-477c-b57c-dcccbb86324d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source FIles\Common\EBO">
+      <UniqueIdentifier>{8b746d1f-3fb6-4ae6-9cff-65cf4f5dd551}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source FIles\Common\STB_Image">
+      <UniqueIdentifier>{12d35f3d-a8ba-42a4-8a17-4306b58af0d1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Common\Texture">
+      <UniqueIdentifier>{2fee8698-3243-4992-a38f-81e2151fd658}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source FIles\Common\Texture">
+      <UniqueIdentifier>{c5b66c82-3b06-471f-a79d-ac129e028624}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source FIles\Common\Camera">
+      <UniqueIdentifier>{e12e15ee-df4f-4c57-be83-18890d366c62}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Common\Camera">
+      <UniqueIdentifier>{81e52163-39c3-403b-bb1c-782b0b4cd530}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\Common\CommonOGL.h">
+      <Filter>Header Files\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\SceneBasic.h">
+      <Filter>Header Files\Common\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\SceneRunner.h">
+      <Filter>Header Files\Common\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\Scene.h">
+      <Filter>Header Files\Common\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Utils\GLUtils.h">
+      <Filter>Header Files\Common\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\ShaderClass.h">
+      <Filter>Header Files\Common\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\VBOClass.h">
+      <Filter>Header Files\Common\VBO</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\VAOClass.h">
+      <Filter>Header Files\Common\VAO</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\EBOClass.h">
+      <Filter>Header Files\Common\EBO</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\TextureClass.h">
+      <Filter>Header Files\Common\Texture</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\Camera.h">
+      <Filter>Header Files\Common\Camera</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>Source FIles</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\external\GLAD\src\glad.c">
+      <Filter>Source FIles\GLAD</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\SceneBasic.cpp">
+      <Filter>Source FIles\Common\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\SceneRunner.cpp">
+      <Filter>Source FIles\Common\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Utils\GLUtils.cpp">
+      <Filter>Source FIles\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\ShaderClass.cpp">
+      <Filter>Source FIles\Common\Shaders</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\VBOClass.cpp">
+      <Filter>Source FIles\Common\VBO</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\VAOClass.cpp">
+      <Filter>Source FIles\Common\VAO</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\EBOClass.cpp">
+      <Filter>Source FIles\Common\EBO</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\STB_Image.cpp">
+      <Filter>Source FIles\Common\STB_Image</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\TextureClass.cpp">
+      <Filter>Source FIles\Common\Texture</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\Camera.cpp">
+      <Filter>Source FIles\Common\Camera</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Shaders\Basic.frag">
+      <Filter>Source FIles\ShadersSource</Filter>
+    </None>
+    <None Include="..\Shaders\Basic.vert">
+      <Filter>Source FIles\ShadersSource</Filter>
+    </None>
+  </ItemGroup>
+</Project>

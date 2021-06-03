@@ -119,6 +119,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\external\GLAD\src\glad.c" />
+    <ClCompile Include="..\Common\Camera.cpp" />
     <ClCompile Include="..\Common\EBOClass.cpp" />
     <ClCompile Include="..\Common\SceneBasic.cpp" />
     <ClCompile Include="..\Common\SceneRunner.cpp" />
@@ -131,6 +132,7 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Common\Camera.h" />
     <ClInclude Include="..\Common\CommonOGL.h" />
     <ClInclude Include="..\Common\EBOClass.h" />
     <ClInclude Include="..\Common\Scene.h" />

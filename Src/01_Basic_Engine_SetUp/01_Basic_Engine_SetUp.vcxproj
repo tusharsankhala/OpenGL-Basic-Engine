@@ -83,6 +83,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)..\..\Common\Include;$(SolutionDir)..\external\GLAD\include;$(SolutionDir)..\external\STB\include;$(SolutionDir)..\external\GLM;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(SolutionDir)..\..\Common\Lib\GLFW;$(SolutionDir)..\..\Common\Lib\GLEW;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -119,30 +120,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\external\GLAD\src\glad.c" />
-    <ClCompile Include="..\Common\Camera.cpp" />
-    <ClCompile Include="..\Common\EBOClass.cpp" />
-    <ClCompile Include="..\Common\SceneBasic.cpp" />
-    <ClCompile Include="..\Common\SceneRunner.cpp" />
-    <ClCompile Include="..\Common\ShaderClass.cpp" />
-    <ClCompile Include="..\Common\STB_Image.cpp" />
-    <ClCompile Include="..\Common\TextureClass.cpp" />
-    <ClCompile Include="..\Common\VAOClass.cpp" />
-    <ClCompile Include="..\Common\VBOClass.cpp" />
     <ClCompile Include="..\Utils\GLUtils.cpp" />
     <ClCompile Include="main.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\Common\Camera.h" />
-    <ClInclude Include="..\Common\CommonOGL.h" />
-    <ClInclude Include="..\Common\EBOClass.h" />
-    <ClInclude Include="..\Common\Scene.h" />
-    <ClInclude Include="..\Common\SceneBasic.h" />
-    <ClInclude Include="..\Common\SceneRunner.h" />
-    <ClInclude Include="..\Common\ShaderClass.h" />
-    <ClInclude Include="..\Common\TextureClass.h" />
-    <ClInclude Include="..\Common\VAOClass.h" />
-    <ClInclude Include="..\Common\VBOClass.h" />
-    <ClInclude Include="..\Utils\GLUtils.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Shaders\Basic.frag" />

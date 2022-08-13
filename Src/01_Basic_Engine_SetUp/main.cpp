@@ -1,3 +1,7 @@
+#include <imgui.h>
+#include <imgui_impl_glfw.h>
+#include <imgui_impl_opengl3.h>
+
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
@@ -115,6 +119,37 @@ int main()
 	glCreateVertexArrays(1, &VAO);
 	glBindVertexArray(VAO);
 
+
+	// IMGUI.
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO(); (void)io;
+	io.BackendFlags |= ImGuiBackendFlags_RendererHasVtxOffset;
+
+	// Build texture atlas
+	ImFontConfig cfg = ImFontConfig();
+	cfg.FontDataOwnedByAtlas = false;
+	cfg.RasterizerMultiply = 1.5f;
+	cfg.SizePixels = 768.0f / 32.0f;
+	cfg.PixelSnapH = true;
+	cfg.OversampleH = 4;
+	cfg.OversampleV = 4;
+
+	ImFont* Font = io.Fonts->AddFontFromFileTTF("../Resources/Fonts/OpenSans-Light.ttf", cfg.SizePixels, &cfg);
+
+	unsigned char* pixels = nullptr;
+	int width, height;
+	io.Fonts->GetTexDataAsRGBA32(&pixels, &width, &height);
+
+
+	ImGui::StyleColorsDark();
+	ImGui_ImplGlfw_InitForOpenGL(window, true);
+	ImGui_ImplOpenGL3_Init("#version 460");
+
+
+
+	float color[4] = { 0.8f, 0.2f, 0.3f , 0.4f };
+
 	const GLsizeiptr kBufferSize = sizeof(mat4);
 
 	GLuint perFrameDataBuffer;
@@ -125,7 +160,7 @@ int main()
 	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 
 	int w, h, comp;
-	const uint8_t* img = stbi_load("../Resources/Textures/UVChecker.jpeg", &w, &h, &comp, 3);
+	const uint8_t* img = stbi_load("../Resources/Textures/Wood.jpg", &w, &h, &comp, 3);
 
 	GLuint texture;
 	glCreateTextures(GL_TEXTURE_2D, 1, &texture);
@@ -148,6 +183,10 @@ int main()
 		glViewport(0, 0, width, height);
 		glClear(GL_COLOR_BUFFER_BIT);
 
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplGlfw_NewFrame();
+		ImGui::NewFrame();
+
 		const mat4 m = glm::rotate(mat4(1.0f), (float)glfwGetTime(), vec3(0.0f, 0.0f, 1.0f));
 		const mat4 p = glm::ortho(-ratio, ratio, -1.f, 1.f, 1.f, -1.f);
 
@@ -157,9 +196,18 @@ int main()
 
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 
+		ImGui::ShowDemoWindow();
+		
+		ImGui::Render();
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
+
+	ImGui_ImplOpenGL3_Shutdown();
+	ImGui_ImplGlfw_Shutdown();
+	ImGui::DestroyContext();
 
 	glDeleteTextures(1, &texture);
 	glDeleteBuffers(1, &perFrameDataBuffer);

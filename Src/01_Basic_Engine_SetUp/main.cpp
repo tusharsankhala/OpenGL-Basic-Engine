@@ -105,6 +105,22 @@ int main()
 		}
 	);
 
+	glfwSetCursorPosCallback(window,
+		[](GLFWwindow* window, double x, double y)
+		{
+			ImGui::GetIO().MousePos = ImVec2(x, y);
+		}
+	);
+
+	glfwSetMouseButtonCallback(window,
+		[](GLFWwindow* window, int button, int action, int mods)
+		{
+			auto& io = ImGui::GetIO();
+			int idx = button == GLFW_MOUSE_BUTTON_LEFT ? 0 : GLFW_MOUSE_BUTTON_RIGHT ? 2 : 1;
+			io.MouseDown[idx] = action = GLFW_PRESS;
+		}
+	);
+
 	glfwMakeContextCurrent(window);
 	gladLoadGL();
 	glfwSwapInterval(1);
@@ -162,7 +178,7 @@ int main()
 	glNamedBufferStorage(perFrameDataBuffer, kBufferSize, nullptr, GL_DYNAMIC_STORAGE_BIT);
 	glBindBufferRange(GL_UNIFORM_BUFFER, 0, perFrameDataBuffer, 0, kBufferSize);
 
-	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+	glClearColor(0.65f, 0.8f, 1.0f, 1.0f);
 
 	int w, h, comp;
 	const uint8_t* img = stbi_load("../Resources/Textures/Wood.jpg", &w, &h, &comp, 3);

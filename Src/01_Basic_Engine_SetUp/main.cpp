@@ -24,10 +24,11 @@ static const char* shaderCodeVertex = R"(
 layout(std140, binding = 0) uniform PerFrameData
 {
 	uniform mat4 MVP;
-	uniform int isWireframe;
+	uniform vec4 color;
 };
 
 layout (location=0) out vec2 uv;
+layout (location=1) out vec4 outColor;
 
 const vec2 pos[3] = vec2[3](
 	vec2(-0.6f, -0.4f),
@@ -46,21 +47,29 @@ void main()
 {
 	gl_Position = MVP * vec4(pos[gl_VertexID], 0.0, 1.0);
 	uv = tc[gl_VertexID];
+	outColor = color;
 }
 )";
 
 static const char* shaderCodeFragment = R"(
 #version 460 core
 layout (location=0) in vec2 uv;
+layout (location=1) in vec4 outColor;
 layout (location=0) out vec4 out_FragColor;
 
 uniform sampler2D texture0;
  
 void main()
 {
-	out_FragColor = texture(texture0, uv);
+	out_FragColor = texture(texture0, uv) * outColor;
 }
 )";
+
+struct PerFrameData
+{
+	mat4 mvp;
+	glm::vec4 color;
+};
 
 
 int main()
@@ -129,7 +138,7 @@ int main()
 	// Build texture atlas
 	ImFontConfig cfg = ImFontConfig();
 	cfg.FontDataOwnedByAtlas = false;
-	cfg.RasterizerMultiply = 1.5f;
+	cfg.RasterizerMultiply = 1.0f;
 	cfg.SizePixels = 768.0f / 32.0f;
 	cfg.PixelSnapH = true;
 	cfg.OversampleH = 4;
@@ -146,11 +155,7 @@ int main()
 	ImGui_ImplGlfw_InitForOpenGL(window, true);
 	ImGui_ImplOpenGL3_Init("#version 460");
 
-
-
-	float color[4] = { 0.8f, 0.2f, 0.3f , 0.4f };
-
-	const GLsizeiptr kBufferSize = sizeof(mat4);
+	const GLsizeiptr kBufferSize = sizeof(PerFrameData);
 
 	GLuint perFrameDataBuffer;
 	glCreateBuffers(1, &perFrameDataBuffer);
@@ -174,6 +179,8 @@ int main()
 
 	stbi_image_free((void*)img);
 
+	float col[4] = { 1.0f , 1.0f, 1.0f, 1.0f };
+
 	while (!glfwWindowShouldClose(window))
 	{
 		int width, height;
@@ -186,17 +193,18 @@ int main()
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
+		ImGui::ColorEdit4("Color", col);
 
 		const mat4 m = glm::rotate(mat4(1.0f), (float)glfwGetTime(), vec3(0.0f, 0.0f, 1.0f));
 		const mat4 p = glm::ortho(-ratio, ratio, -1.f, 1.f, 1.f, -1.f);
 
 		const mat4 mvp = p * m;
 
-		glNamedBufferSubData(perFrameDataBuffer, 0, kBufferSize, glm::value_ptr(mvp));
+		PerFrameData perFrameData = { .mvp = p * m, .color = glm::vec4(col[0], col[1], col[2], col[3]) };
 
-		glDrawArrays(GL_TRIANGLES, 0, 3);
+		glNamedBufferSubData(perFrameDataBuffer, 0, kBufferSize, &perFrameData);
 
-		ImGui::ShowDemoWindow();
+		glDrawArrays(GL_TRIANGLES, 0, 3);		
 		
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

@@ -6,6 +6,7 @@
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
+#include "easy/profiler.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
@@ -14,6 +15,8 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <chrono>
+#include <thread>
 
 using glm::mat4;
 using glm::vec3;
@@ -74,6 +77,9 @@ struct PerFrameData
 
 int main()
 {
+	EASY_MAIN_THREAD;
+	EASY_PROFILER_ENABLE;
+
 	glfwSetErrorCallback(
 		[](int error, const char* description)
 		{
@@ -125,6 +131,8 @@ int main()
 	gladLoadGL();
 	glfwSwapInterval(1);
 
+	EASY_BLOCK("Create Resources");
+
 	const GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
 	glShaderSource(vertexShader, 1, &shaderCodeVertex, nullptr);
 	glCompileShader(vertexShader);
@@ -144,6 +152,14 @@ int main()
 	glCreateVertexArrays(1, &VAO);
 	glBindVertexArray(VAO);
 
+	const GLsizeiptr kBufferSize = sizeof(PerFrameData);
+
+	GLuint perFrameDataBuffer;
+	glCreateBuffers(1, &perFrameDataBuffer);
+	glNamedBufferStorage(perFrameDataBuffer, kBufferSize, nullptr, GL_DYNAMIC_STORAGE_BIT);
+	glBindBufferRange(GL_UNIFORM_BUFFER, 0, perFrameDataBuffer, 0, kBufferSize);
+
+	EASY_END_BLOCK
 
 	// IMGUI.
 	IMGUI_CHECKVERSION();
@@ -171,14 +187,10 @@ int main()
 	ImGui_ImplGlfw_InitForOpenGL(window, true);
 	ImGui_ImplOpenGL3_Init("#version 460");
 
-	const GLsizeiptr kBufferSize = sizeof(PerFrameData);
-
-	GLuint perFrameDataBuffer;
-	glCreateBuffers(1, &perFrameDataBuffer);
-	glNamedBufferStorage(perFrameDataBuffer, kBufferSize, nullptr, GL_DYNAMIC_STORAGE_BIT);
-	glBindBufferRange(GL_UNIFORM_BUFFER, 0, perFrameDataBuffer, 0, kBufferSize);
-
-	glClearColor(0.65f, 0.8f, 1.0f, 1.0f);
+	{
+		EASY_BLOCK("Set State");
+		glClearColor(0.65f, 0.8f, 1.0f, 1.0f);
+	}
 
 	int w, h, comp;
 	const uint8_t* img = stbi_load("../Resources/Textures/Wood.jpg", &w, &h, &comp, 3);
@@ -199,6 +211,8 @@ int main()
 
 	while (!glfwWindowShouldClose(window))
 	{
+		EASY_BLOCK("MainLoop");
+
 		int width, height;
 		glfwGetFramebufferSize(window, &width, &height);
 		const float ratio = width / (float)height;
@@ -217,16 +231,25 @@ int main()
 		const mat4 mvp = p * m;
 
 		PerFrameData perFrameData = { .mvp = p * m, .color = glm::vec4(col[0], col[1], col[2], col[3]) };
+		{
+			EASY_BLOCK("Triangle Render");
+			glNamedBufferSubData(perFrameDataBuffer, 0, kBufferSize, &perFrameData);
+			glDrawArrays(GL_TRIANGLES, 0, 3);
+		}
 
-		glNamedBufferSubData(perFrameDataBuffer, 0, kBufferSize, &perFrameData);
-
-		glDrawArrays(GL_TRIANGLES, 0, 3);		
-		
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-		glfwSwapBuffers(window);
-		glfwPollEvents();
+		{
+			EASY_BLOCK("glfwSwapBuffers()");
+			glfwSwapBuffers(window);
+		}
+
+		{
+			EASY_BLOCK("glfwPoolEvents()");
+			std::this_thread::sleep_for(std::chrono::milliseconds(2));
+			glfwPollEvents();
+		}
 	}
 
 	ImGui_ImplOpenGL3_Shutdown();
@@ -242,6 +265,8 @@ int main()
 
 	glfwDestroyWindow(window);
 	glfwTerminate();
+
+	profiler::dumpBlocksToFile("profiler_dump.prof");
 
 	return 0;
 }

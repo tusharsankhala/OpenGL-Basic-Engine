@@ -6,7 +6,11 @@
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
-#include "easy/profiler.h"
+
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
+#include <assimp/cimport.h>
+#include <assimp/version.h>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
@@ -15,8 +19,8 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <chrono>
-#include <thread>
+
+#include <vector>
 
 using glm::mat4;
 using glm::vec3;
@@ -27,59 +31,38 @@ static const char* shaderCodeVertex = R"(
 layout(std140, binding = 0) uniform PerFrameData
 {
 	uniform mat4 MVP;
-	uniform vec4 color;
+	uniform int isWireframe;
 };
 
-layout (location=0) out vec2 uv;
-layout (location=1) out vec4 outColor;
-
-const vec2 pos[3] = vec2[3](
-	vec2(-0.6f, -0.4f),
-	vec2( 0.6f, -0.4f),
-	vec2( 0.0f,  0.6f)
-);
-
-const vec2 tc[3] = vec2[3]
-(
-	vec2(0.0, 0.0),
-	vec2(1.0, 0.0),
-	vec2(0.5, 1.0)
-);
+layout (location=0) in vec3 pos;
+layout (location=0) out vec3 color;
 
 void main()
 {
-	gl_Position = MVP * vec4(pos[gl_VertexID], 0.0, 1.0);
-	uv = tc[gl_VertexID];
-	outColor = color;
+	gl_Position = MVP * vec4(pos, 1.0);
+	color = isWireframe > 0 ? vec3(0.0f) : pos.xyz;
 }
 )";
 
 static const char* shaderCodeFragment = R"(
 #version 460 core
-layout (location=0) in vec2 uv;
-layout (location=1) in vec4 outColor;
+layout (location=0) in vec3 color;
 layout (location=0) out vec4 out_FragColor;
 
-uniform sampler2D texture0;
- 
 void main()
 {
-	out_FragColor = texture(texture0, uv) * outColor;
+	out_FragColor = vec4(color, 1.0);
 }
 )";
 
 struct PerFrameData
 {
 	mat4 mvp;
-	glm::vec4 color;
+	int isWireframe;
 };
 
-
-int main()
+int main(void)
 {
-	EASY_MAIN_THREAD;
-	EASY_PROFILER_ENABLE;
-
 	glfwSetErrorCallback(
 		[](int error, const char* description)
 		{
@@ -94,44 +77,25 @@ int main()
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-	GLFWwindow* window = glfwCreateWindow(1024, 768, "OpenGL Window", nullptr, nullptr);
+	GLFWwindow* window = glfwCreateWindow(1024, 768, "Simple example", nullptr, nullptr);
 	if (!window)
 	{
 		glfwTerminate();
 		exit(EXIT_FAILURE);
 	}
 
-	glfwSetKeyCallback(window,
+	glfwSetKeyCallback(
+		window,
 		[](GLFWwindow* window, int key, int scancode, int action, int mods)
 		{
 			if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-			{
-				glfwSetWindowShouldClose(window, true);
-			}
-		}
-	);
-
-	glfwSetCursorPosCallback(window,
-		[](GLFWwindow* window, double x, double y)
-		{
-			ImGui::GetIO().MousePos = ImVec2(x, y);
-		}
-	);
-
-	glfwSetMouseButtonCallback(window,
-		[](GLFWwindow* window, int button, int action, int mods)
-		{
-			auto& io = ImGui::GetIO();
-			int idx = button == GLFW_MOUSE_BUTTON_LEFT ? 0 : GLFW_MOUSE_BUTTON_RIGHT ? 2 : 1;
-			io.MouseDown[idx] = action = GLFW_PRESS;
+				glfwSetWindowShouldClose(window, GLFW_TRUE);
 		}
 	);
 
 	glfwMakeContextCurrent(window);
 	gladLoadGL();
 	glfwSwapInterval(1);
-
-	EASY_BLOCK("Create Resources");
 
 	const GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
 	glShaderSource(vertexShader, 1, &shaderCodeVertex, nullptr);
@@ -144,22 +108,17 @@ int main()
 	const GLuint program = glCreateProgram();
 	glAttachShader(program, vertexShader);
 	glAttachShader(program, fragmentShader);
-
 	glLinkProgram(program);
-	glUseProgram(program);
 
 	GLuint VAO;
 	glCreateVertexArrays(1, &VAO);
 	glBindVertexArray(VAO);
 
 	const GLsizeiptr kBufferSize = sizeof(PerFrameData);
-
 	GLuint perFrameDataBuffer;
 	glCreateBuffers(1, &perFrameDataBuffer);
 	glNamedBufferStorage(perFrameDataBuffer, kBufferSize, nullptr, GL_DYNAMIC_STORAGE_BIT);
 	glBindBufferRange(GL_UNIFORM_BUFFER, 0, perFrameDataBuffer, 0, kBufferSize);
-
-	EASY_END_BLOCK
 
 	// IMGUI.
 	IMGUI_CHECKVERSION();
@@ -176,87 +135,93 @@ int main()
 	cfg.OversampleH = 4;
 	cfg.OversampleV = 4;
 
-	ImFont* Font = io.Fonts->AddFontFromFileTTF("../Resources/Fonts/OpenSans-Light.ttf", cfg.SizePixels, &cfg);
-
-	unsigned char* pixels = nullptr;
-	int width, height;
-	io.Fonts->GetTexDataAsRGBA32(&pixels, &width, &height);
-
-
 	ImGui::StyleColorsDark();
 	ImGui_ImplGlfw_InitForOpenGL(window, true);
 	ImGui_ImplOpenGL3_Init("#version 460");
 
+	glClearColor(0.65f, 0.8f, 1.0f, 1.0f);
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_POLYGON_OFFSET_LINE);
+	glPolygonOffset(-1.0f, -1.0f);
+
+	GLuint meshData;
+	glCreateBuffers(1, &meshData);
+
+	const aiScene* scene = aiImportFile("../Resources/meshes/rubber_duck/scene.gltf", aiProcess_Triangulate);
+
+	if (!scene || !scene->HasMeshes())
 	{
-		EASY_BLOCK("Set State");
-		glClearColor(0.65f, 0.8f, 1.0f, 1.0f);
+		printf("Unable to load data/rubber_duck/scene.gltf\n");
+		exit(255);
 	}
 
-	int w, h, comp;
-	const uint8_t* img = stbi_load("../Resources/Textures/Wood.jpg", &w, &h, &comp, 3);
+	const aiMesh* mesh = scene->mMeshes[0];
+	std::vector<vec3> positions;
+	for (unsigned int i = 0; i != mesh->mNumFaces; i++)
+	{
+		const aiFace& face = mesh->mFaces[i];
+		const unsigned int idx[3] = { face.mIndices[0], face.mIndices[1], face.mIndices[2] };
+		for (int j = 0; j != 3; j++)
+		{
+			const aiVector3D v = mesh->mVertices[idx[j]];
+			positions.push_back(vec3(v.x, v.z, v.y));
+		}
+	}
 
-	GLuint texture;
-	glCreateTextures(GL_TEXTURE_2D, 1, &texture);
-	glTextureParameteri(texture, GL_TEXTURE_MAX_LEVEL, 0);
-	glTextureParameteri(texture, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTextureParameteri(texture, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTextureStorage2D(texture, 1, GL_RGB8, w, h);
-	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-	glTextureSubImage2D(texture, 0, 0, 0, w, h, GL_RGB, GL_UNSIGNED_BYTE, img);
-	glBindTextures(0, 1, &texture);
+	aiReleaseImport(scene);
 
-	stbi_image_free((void*)img);
+	glNamedBufferStorage(meshData, sizeof(vec3) * positions.size(), positions.data(), 0);
 
-	float col[4] = { 1.0f , 1.0f, 1.0f, 1.0f };
+	glVertexArrayVertexBuffer(VAO, 0, meshData, 0, sizeof(vec3));
+	glEnableVertexArrayAttrib(VAO, 0);
+	glVertexArrayAttribFormat(VAO, 0, 3, GL_FLOAT, GL_FALSE, 0);
+	glVertexArrayAttribBinding(VAO, 0, 0);
+
+	unsigned int numVertices = positions.size();
 
 	while (!glfwWindowShouldClose(window))
 	{
-		EASY_BLOCK("MainLoop");
-
 		int width, height;
 		glfwGetFramebufferSize(window, &width, &height);
 		const float ratio = width / (float)height;
 
 		glViewport(0, 0, width, height);
-		glClear(GL_COLOR_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
-		ImGui::ColorEdit4("Color", col);
 
-		const mat4 m = glm::rotate(mat4(1.0f), (float)glfwGetTime(), vec3(0.0f, 0.0f, 1.0f));
-		const mat4 p = glm::ortho(-ratio, ratio, -1.f, 1.f, 1.f, -1.f);
+		const mat4 m = glm::rotate(glm::translate(mat4(1.0f), vec3(0.0f, -0.5f, -1.5f)), (float)glfwGetTime(), vec3(0.0f, 1.0f, 0.0f));
+		const mat4 p = glm::perspective(45.0f, ratio, 0.1f, 1000.0f);
 
-		const mat4 mvp = p * m;
+		PerFrameData perFrameData = { .mvp = p * m, .isWireframe = false };
 
-		PerFrameData perFrameData = { .mvp = p * m, .color = glm::vec4(col[0], col[1], col[2], col[3]) };
-		{
-			EASY_BLOCK("Triangle Render");
-			glNamedBufferSubData(perFrameDataBuffer, 0, kBufferSize, &perFrameData);
-			glDrawArrays(GL_TRIANGLES, 0, 3);
-		}
+		glUseProgram(program);
+		glNamedBufferSubData(perFrameDataBuffer, 0, kBufferSize, &perFrameData);
 
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		glDrawArrays(GL_TRIANGLES, 0, numVertices);
+
+		perFrameData.isWireframe = true;
+		glNamedBufferSubData(perFrameDataBuffer, 0, kBufferSize, &perFrameData);
+
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		glDrawArrays(GL_TRIANGLES, 0, numVertices);
+
+		ImGui::ShowDemoWindow();
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-		{
-			EASY_BLOCK("glfwSwapBuffers()");
-			glfwSwapBuffers(window);
-		}
-
-		{
-			EASY_BLOCK("glfwPoolEvents()");
-			std::this_thread::sleep_for(std::chrono::milliseconds(2));
-			glfwPollEvents();
-		}
+		glfwSwapBuffers(window);
+		glfwPollEvents();
 	}
 
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplGlfw_Shutdown();
 	ImGui::DestroyContext();
 
-	glDeleteTextures(1, &texture);
+	glDeleteBuffers(1, &meshData);
 	glDeleteBuffers(1, &perFrameDataBuffer);
 	glDeleteProgram(program);
 	glDeleteShader(fragmentShader);
@@ -265,8 +230,6 @@ int main()
 
 	glfwDestroyWindow(window);
 	glfwTerminate();
-
-	profiler::dumpBlocksToFile("profiler_dump.prof");
 
 	return 0;
 }

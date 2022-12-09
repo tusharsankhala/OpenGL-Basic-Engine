@@ -1,26 +1,46 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30804.86
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32901.215
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "01_Basic_Engine_SetUp", "..\Src\01_Basic_Engine_SetUp\01_Basic_Engine_SetUp.vcxproj", "{86A65A31-034E-4CE2-86C9-A68A8951E1F3}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "01_Basic_Engine_SetUp", "..\src\01_Basic_Engine_SetUp\01_Basic_Engine_SetUp.vcxproj", "{86A65A31-034E-4CE2-86C9-A68A8951E1F3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ThirdPartyLibraries", "ThirdPartyLibraries", "{327AD4BC-2939-4D82-93EC-91C17C90362B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
 		Debug|x86 = Debug|x86
+		Dist|x64 = Dist|x64
+		Dist|x86 = Dist|x86
+		MinSizeRel|x64 = MinSizeRel|x64
+		MinSizeRel|x86 = MinSizeRel|x86
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
+		RelWithDebInfo|x64 = RelWithDebInfo|x64
+		RelWithDebInfo|x86 = RelWithDebInfo|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{86A65A31-034E-4CE2-86C9-A68A8951E1F3}.Debug|x64.ActiveCfg = Debug|x64
 		{86A65A31-034E-4CE2-86C9-A68A8951E1F3}.Debug|x64.Build.0 = Debug|x64
 		{86A65A31-034E-4CE2-86C9-A68A8951E1F3}.Debug|x86.ActiveCfg = Debug|Win32
 		{86A65A31-034E-4CE2-86C9-A68A8951E1F3}.Debug|x86.Build.0 = Debug|Win32
+		{86A65A31-034E-4CE2-86C9-A68A8951E1F3}.Dist|x64.ActiveCfg = Debug|x64
+		{86A65A31-034E-4CE2-86C9-A68A8951E1F3}.Dist|x64.Build.0 = Debug|x64
+		{86A65A31-034E-4CE2-86C9-A68A8951E1F3}.Dist|x86.ActiveCfg = Debug|Win32
+		{86A65A31-034E-4CE2-86C9-A68A8951E1F3}.Dist|x86.Build.0 = Debug|Win32
+		{86A65A31-034E-4CE2-86C9-A68A8951E1F3}.MinSizeRel|x64.ActiveCfg = Release|x64
+		{86A65A31-034E-4CE2-86C9-A68A8951E1F3}.MinSizeRel|x64.Build.0 = Release|x64
+		{86A65A31-034E-4CE2-86C9-A68A8951E1F3}.MinSizeRel|x86.ActiveCfg = Release|Win32
+		{86A65A31-034E-4CE2-86C9-A68A8951E1F3}.MinSizeRel|x86.Build.0 = Release|Win32
 		{86A65A31-034E-4CE2-86C9-A68A8951E1F3}.Release|x64.ActiveCfg = Release|x64
 		{86A65A31-034E-4CE2-86C9-A68A8951E1F3}.Release|x64.Build.0 = Release|x64
 		{86A65A31-034E-4CE2-86C9-A68A8951E1F3}.Release|x86.ActiveCfg = Release|Win32
 		{86A65A31-034E-4CE2-86C9-A68A8951E1F3}.Release|x86.Build.0 = Release|Win32
+		{86A65A31-034E-4CE2-86C9-A68A8951E1F3}.RelWithDebInfo|x64.ActiveCfg = Release|x64
+		{86A65A31-034E-4CE2-86C9-A68A8951E1F3}.RelWithDebInfo|x64.Build.0 = Release|x64
+		{86A65A31-034E-4CE2-86C9-A68A8951E1F3}.RelWithDebInfo|x86.ActiveCfg = Release|Win32
+		{86A65A31-034E-4CE2-86C9-A68A8951E1F3}.RelWithDebInfo|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

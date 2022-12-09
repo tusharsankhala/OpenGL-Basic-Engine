@@ -7,24 +7,51 @@
     <Filter Include="Source FIles">
       <UniqueIdentifier>{1d3c049b-a5e2-4295-92fd-12d0b0669478}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source FIles\GLAD">
-      <UniqueIdentifier>{998434cf-adde-4e04-8502-f107f29f359d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source FIles\Utils">
       <UniqueIdentifier>{c69a58a2-cc03-4cb3-a3c0-8004efb9362f}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source FIles\ShadersSource">
       <UniqueIdentifier>{7c8587d0-ba56-4369-a164-3912265c3e92}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source FIles\glad">
+      <UniqueIdentifier>{6874f994-adce-452f-b059-287ed95ce40b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Utils">
+      <UniqueIdentifier>{869b0a01-a920-453e-97e2-492c444a141d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\ShadersUtils">
+      <UniqueIdentifier>{247b4431-fca6-48b9-83c6-ed41579e104b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source FIles\ShaderUtils">
+      <UniqueIdentifier>{7c3e4848-4cd4-474c-b564-4b0635ee1041}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{56890e47-08f7-4f2b-93de-4137fb5c78b0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>Source FIles</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\external\GLAD\src\glad.c">
-      <Filter>Source FIles\GLAD</Filter>
-    </ClCompile>
     <ClCompile Include="..\Utils\GLUtils.cpp">
+      <Filter>Source FIles\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\deps\glad\src\wgl.c">
+      <Filter>Source FIles\glad</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\deps\glad\src\gl.c">
+      <Filter>Source FIles\glad</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\deps\glad\src\vulkan.c">
+      <Filter>Source FIles\glad</Filter>
+    </ClCompile>
+    <ClCompile Include="..\imgui\imgui_wrapper.cpp">
+      <Filter>Source FIles</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ShaderUtils\GLShader.cpp">
+      <Filter>Source FIles\ShaderUtils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Utils\StringUtils.cpp">
       <Filter>Source FIles\Utils</Filter>
     </ClCompile>
   </ItemGroup>
@@ -35,5 +62,19 @@
     <None Include="..\Shaders\Basic.vert">
       <Filter>Source FIles\ShadersSource</Filter>
     </None>
+    <None Include="..\Shaders\Basic.geom">
+      <Filter>Shaders</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\Utils\debug.h">
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ShaderUtils\GLShader.h">
+      <Filter>Header Files\ShadersUtils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Utils\StringUtils.h">
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
